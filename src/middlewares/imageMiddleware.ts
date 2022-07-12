@@ -10,10 +10,12 @@ const imageFileName = (
   next: Function
 ): void => {
   filePromise
-    .readFile(`images/${req.query.fileName}.jpg`)
+    .readFile(`images/full/${req.query.fileName}.jpg`)
     .then(() => next())
     .catch(() =>
-      res.json({ message: `no file is found named ${req.query.fileName}` })
+      res
+        .status(404)
+        .json({ message: `no file is found named ${req.query.fileName}` })
     );
 };
 
