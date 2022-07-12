@@ -4,7 +4,8 @@
 import supertest from "supertest";
 import { promises as File } from "fs";
 import path from "path";
-import app from "../index.ts";
+// eslint-disable-next-line import/extensions
+import app from "../index";
 
 const request = supertest(app);
 
