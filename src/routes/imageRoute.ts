@@ -1,8 +1,8 @@
+/* eslint-disable import/extensions */
 import express, { Router } from "express";
-import sharp from "sharp";
 import path from "path";
-// eslint-disable-next-line import/extensions
 import imageFileName from "../middlewares/imageMiddleware";
+import imageProcess from "../utilities/imageProcessing";
 
 const imageRouter = Router();
 
@@ -16,13 +16,19 @@ imageRouter.get(
   "/images",
   imageFileName,
   (req: express.Request<unknown, unknown, unknown, ReqParamsImage>, res) => {
-    sharp(`images/full/${req.query.fileName}.jpg`)
-      .resize(
-        parseInt(req.query?.width, 10) ? parseInt(req.query?.width, 10) : null,
-        parseInt(req.query?.height, 10) ? parseInt(req.query?.height, 10) : null
-      )
-      .jpeg({ mozjpeg: true })
-      .toFile(`images/thumb/${req.query.fileName}_thumb.jpg`)
+    const width = parseInt(req.query?.width, 10)
+      ? parseInt(req.query?.width, 10)
+      : null;
+    const height = parseInt(req.query?.height, 10)
+      ? parseInt(req.query?.height, 10)
+      : null;
+    // sending the query params to image processing module
+    imageProcess(
+      `images/full/${req.query.fileName}.jpg`,
+      width,
+      height,
+      `images/thumb/${req.query.fileName}_thumb.jpg`
+    )
       .then(() => {
         res
           .status(200)
