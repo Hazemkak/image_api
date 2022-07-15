@@ -16,7 +16,10 @@ imageRouter.get(
   "/images",
   imageMiddleWare.imageFileName,
   imageMiddleWare.imageAlreadyExists,
-  (req: express.Request<unknown, unknown, unknown, ReqParamsImage>, res) => {
+  (
+    req: express.Request<unknown, unknown, unknown, ReqParamsImage>,
+    res
+  ): void => {
     const width = parseInt(req.query?.width, 10)
       ? parseInt(req.query?.width, 10)
       : null;

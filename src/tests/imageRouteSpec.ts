@@ -9,18 +9,18 @@ import app from "../index";
 
 const request = supertest(app);
 
-describe("Testing the /api/images endpoint GET ERROR HANDLING", () => {
-  it("endpoint will throw error in case no fileName", async () => {
+describe("Testing the /api/images endpoint GET ERROR HANDLING", (): void => {
+  it("endpoint will throw error in case no fileName", async (): Promise<void> => {
     const data = await request.get("/api/images");
     expect(data.status).toEqual(404);
   });
-  it("endpoint will throw error json with message", async () => {
+  it("endpoint will throw error json with message", async (): Promise<void> => {
     const data = await request.get("/api/images");
     expect(data.body).toEqual({
       message: `no file is found named ${undefined}`,
     });
   });
-  it("endpoint will throw error json with message include fileName", async () => {
+  it("endpoint will throw error json with message include fileName", async (): Promise<void> => {
     const fileName = "fakeImage";
     const data = await request.get("/api/images").query({ fileName });
     expect(data.body).toEqual({
@@ -29,17 +29,17 @@ describe("Testing the /api/images endpoint GET ERROR HANDLING", () => {
   });
 });
 
-describe("Testing the /api/images endpoint GET SUCCESS HANDLING", () => {
+describe("Testing the /api/images endpoint GET SUCCESS HANDLING", (): void => {
   const realImage = "palmtunnel";
   const dimensions = { width: 50, height: 100 };
-  it("endpoint will return status 200", async () => {
+  it("endpoint will return status 200", async (): Promise<void> => {
     const data = await request
       .get("/api/images")
       .query({ fileName: realImage });
     expect(data.status).toEqual(200);
   });
 
-  it("endpoint will save the resized file", async () => {
+  it("endpoint will save the resized file", async (): Promise<void> => {
     await request.get("/api/images").query({
       fileName: realImage,
       width: dimensions.width,
