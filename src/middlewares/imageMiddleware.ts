@@ -2,6 +2,7 @@
 /* eslint-disable import/no-unresolved */
 import express from "express";
 import { promises as filePromise } from "fs";
+import path from "path";
 import { ReqParamsImage } from "../routes/imageRoute";
 
 const imageFileName = (
@@ -9,8 +10,9 @@ const imageFileName = (
   res: express.Response,
   next: Function
 ): void => {
+  const targetPath = `${req.query.fileName}.jpg`;
   filePromise
-    .readFile(`images/full/${req.query.fileName}.jpg`)
+    .readFile(path.join(__dirname, "..", "..", "images", "full", targetPath))
     .then(() => next())
     .catch(() =>
       res
@@ -19,4 +21,27 @@ const imageFileName = (
     );
 };
 
-export default imageFileName;
+const imageAlreadyExists = (
+  req: express.Request<unknown, unknown, unknown, ReqParamsImage>,
+  res: express.Response,
+  next: Function
+): void => {
+  const width = parseInt(req.query?.width, 10)
+    ? parseInt(req.query?.width, 10)
+    : null;
+  const height = parseInt(req.query?.height, 10)
+    ? parseInt(req.query?.height, 10)
+    : null;
+  const targetPath = `${req.query.fileName}_${width}_${height}.jpg`;
+  filePromise
+    .readFile(path.join(__dirname, "..", "..", "images", "thumb", targetPath))
+    .then(() =>
+      res
+        .status(200)
+        .sendFile(
+          path.join(__dirname, "..", "..", "images", "thumb", targetPath)
+        )
+    )
+    .catch(() => next());
+};
+export { imageFileName, imageAlreadyExists };

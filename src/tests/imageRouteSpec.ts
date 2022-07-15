@@ -31,6 +31,7 @@ describe("Testing the /api/images endpoint GET ERROR HANDLING", () => {
 
 describe("Testing the /api/images endpoint GET SUCCESS HANDLING", () => {
   const realImage = "palmtunnel";
+  const dimensions = { width: 50, height: 100 };
   it("endpoint will return status 200", async () => {
     const data = await request
       .get("/api/images")
@@ -39,7 +40,11 @@ describe("Testing the /api/images endpoint GET SUCCESS HANDLING", () => {
   });
 
   it("endpoint will save the resized file", async () => {
-    await request.get("/api/images").query({ fileName: realImage });
+    await request.get("/api/images").query({
+      fileName: realImage,
+      width: dimensions.width,
+      height: dimensions.height,
+    });
     expect(
       File.readFile(
         path.join(
@@ -48,7 +53,7 @@ describe("Testing the /api/images endpoint GET SUCCESS HANDLING", () => {
           "..",
           "images",
           "thumb",
-          `${realImage}_thumb.jpg`
+          `${realImage}_${dimensions.width}_${dimensions.height}.jpg`
         )
       )
     ).toBeTruthy();

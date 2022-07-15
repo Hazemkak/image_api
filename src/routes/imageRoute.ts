@@ -1,7 +1,7 @@
 /* eslint-disable import/extensions */
 import express, { Router } from "express";
 import path from "path";
-import imageFileName from "../middlewares/imageMiddleware";
+import * as imageMiddleWare from "../middlewares/imageMiddleware";
 import imageProcess from "../utilities/imageProcessing";
 
 const imageRouter = Router();
@@ -14,7 +14,8 @@ export interface ReqParamsImage {
 
 imageRouter.get(
   "/images",
-  imageFileName,
+  imageMiddleWare.imageFileName,
+  imageMiddleWare.imageAlreadyExists,
   (req: express.Request<unknown, unknown, unknown, ReqParamsImage>, res) => {
     const width = parseInt(req.query?.width, 10)
       ? parseInt(req.query?.width, 10)
@@ -22,25 +23,19 @@ imageRouter.get(
     const height = parseInt(req.query?.height, 10)
       ? parseInt(req.query?.height, 10)
       : null;
+    const imgNewName = `${req.query.fileName}_${width}_${height}.jpg`;
     // sending the query params to image processing module
     imageProcess(
       `images/full/${req.query.fileName}.jpg`,
       width,
       height,
-      `images/thumb/${req.query.fileName}_thumb.jpg`
+      `images/thumb/${imgNewName}`
     )
       .then(() => {
         res
           .status(200)
           .sendFile(
-            path.join(
-              __dirname,
-              "..",
-              "..",
-              "images",
-              "thumb",
-              `${req.query.fileName}_thumb.jpg`
-            )
+            path.join(__dirname, "..", "..", "images", "thumb", imgNewName)
           );
       })
       .catch(() => {
